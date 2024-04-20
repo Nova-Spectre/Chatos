@@ -40,7 +40,10 @@ const rootReducer = (state = initialState, action) => {
         case 'SET_SELECTED_USER':
             return {
                 ...state,
-                selectedUser: action.payload,
+                selectedUser: {
+                    _id: action.payload._id,
+                    username: action.payload.username,
+                },
             };
         case 'ADD_USER_TO_LIST':
             return addUserToListReducer(state, action.payload);

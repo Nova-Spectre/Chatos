@@ -25,9 +25,9 @@ export const setUserStatus = (status) => ({
     
   });
 
-  export const setSelectedUser = (user) => ({
+  export const setSelectedUser = ({ _id, username } ) => ({
     type: 'SET_SELECTED_USER',
-    payload: user,
+    payload: { _id, username },
   });
   
   export const addUserToList = (user) => ({

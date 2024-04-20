@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  MDBBtn,
-  MDBContainer,
-  MDBCard,
-  MDBCardBody,
-  MDBInput
-} from 'mdb-react-ui-kit';
-import {useNavigate} from "react-router-dom";// Import useNavigate for navigation
-import { registerUser } from '../../../state/actions.js'; // Import registerUser action
+import { MDBBtn, MDBContainer, MDBCard, MDBCardBody, MDBInput } from 'mdb-react-ui-kit';
+import { useNavigate } from "react-router-dom";
+import { registerUser } from '../../../state/actions.js';
 
 function Registration() {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Get navigate object for navigation
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -21,10 +15,7 @@ function Registration() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Convert email to lowercase if the input field is for email
     const lowercasedValue = name === 'email' ? value.toLowerCase() : value;
-
     setFormData({
       ...formData,
       [name]: lowercasedValue
@@ -50,17 +41,10 @@ function Registration() {
         throw new Error('Failed to register user');
       }
 
-      // Navigate to the login page after successful registration
       navigate('/login');
-
-      // Optionally display a Snackbar notification for registration completion
-      // Note: Implementing a Snackbar component depends on the library you're using
-      // You can use Material-UI Snackbar or any other similar library
       alert('Registration completed successfully');
 
       const savedUser = await savedUserResponse.json();
-      // Optionally dispatch an action with the saved user data
-      // dispatch(registerUser(savedUser));
       console.log("User registered successfully:", savedUser);
     } catch (error) {
       console.error("Error registering user:", error.message);
@@ -68,14 +52,14 @@ function Registration() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen flex items-center justify-center">
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <MDBContainer>
-        <MDBCard className='mx-auto' style={{maxWidth: '400px'}}>
-          <MDBCardBody className='px-5 py-8'>
-            <h2 className="text-3xl text-center mb-8 font-bold text-white">Create an account</h2>
+        <MDBCard className='mx-auto' style={{ maxWidth: '600px' }}>
+          <MDBCardBody className='px-10 py-12'>
+            <h2 className="text-4xl text-center mb-10 font-bold text-gray-800">Create an account</h2>
             <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="username" className="text-white">Your Name</label>
+              <div className="mb-6">
+                <label htmlFor="username" className="text-gray-800">Username</label>
                 <MDBInput
                   id='username'
                   type='text'
@@ -83,11 +67,11 @@ function Registration() {
                   value={formData.username}
                   onChange={handleChange}
                   required
-                  className="rounded-full"
+                  className="rounded-full py-3 px-3 text-lg"
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="email" className="text-white">Your Email</label>
+              <div className="mb-6">
+                <label htmlFor="email" className="text-gray-800">Your Email</label>
                 <MDBInput
                   id='email'
                   type='email'
@@ -95,11 +79,11 @@ function Registration() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="rounded-full"
+                  className="rounded-full py-3 px-4 text-lg"
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="password" className="text-white">Password</label>
+              <div className="mb-6">
+                <label htmlFor="password" className="text-gray-800">Password</label>
                 <MDBInput
                   id='password'
                   type='password'
@@ -107,10 +91,10 @@ function Registration() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="rounded-full"
+                  className="rounded-full py-3 px-4 text-lg"
                 />
               </div>
-              <MDBBtn className='mb-4 w-full bg-white text-black' size='lg' type='submit'>Register</MDBBtn>
+              <MDBBtn className='mb-6 w-full bg-green-500 text-white hover:bg-green-600 text-lg' size='lg' type='submit'>Register</MDBBtn>
             </form>
           </MDBCardBody>
         </MDBCard>

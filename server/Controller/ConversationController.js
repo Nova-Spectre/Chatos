@@ -3,32 +3,38 @@ import User from "../Model/Users.js"; // Assuming your user model file is named 
 
 export const addmembers = async (req, res) => {
   const { memberId,senderId } = req.body;
+     
 
   try {
 
     const existingConversation = await Conversation.findOne({
-        members: { $all: [memberId] }
-      });
+      members: { $in: [memberId] }
+  });
   
-      let conversation=null;
-      if (existingConversation) {
-        // If a conversation exists, reuse it
-        conversation = existingConversation;
-      } else {
-        // If no conversation exists, create a new one
-        conversation = new Conversation({ members: [memberId] });
-        await conversation.save();
-        const user = await User.findById(senderId);
-
-    if (!user) {
+  let conversation = null;
+  if (existingConversation) {
+      // If a conversation exists, reuse it
+      conversation = existingConversation;
+      console.log(`Existing Conversation`);
+  } else {
+      // If no conversation exists, create a new one
+      conversation = new Conversation({ members: [memberId] });
+      await conversation.save();
+      console.log(`New Conversation`);
+  }
+  
+  // Update sender's conversations
+  const user = await User.findById(senderId);
+  if (!user) {
       return res.status(404).json({ error: 'User not found' });
-    }
-    const updatedUser = await User.findByIdAndUpdate(senderId, { $push: { conversations: conversation._id } });
-    console.log('Conversation ID:', conversation._id); 
-
-      }
-    return res.status(200).json({ message: 'Member added to conversation successfully', conversations: conversation._id });
-    console.log('member added to db');
+  }
+  
+  const updatedUser = await User.findByIdAndUpdate(senderId, { $push: { conversations: conversation._id } });
+  console.log('Conversation ID:', conversation._id);
+  console.log(updatedUser);
+  
+  return res.status(200).json({ message: 'Member added to conversation successfully', conversations: conversation._id });
+  
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });

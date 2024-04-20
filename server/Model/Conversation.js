@@ -33,6 +33,8 @@ const conversationSchema = new mongoose.Schema({
 {timestamps:true}
 );
 
+conversationSchema.index({ members: 1 }, { unique: true }); // Ensure members are unique
+conversationSchema.index({ _id: 1 }, { unique: true }); 
 
 
 const Conversation=mongoose.model('Conversation',conversationSchema);

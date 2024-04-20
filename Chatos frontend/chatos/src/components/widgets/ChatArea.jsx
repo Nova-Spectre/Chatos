@@ -150,11 +150,48 @@ const ChatArea = ({ selectedUser }) => {
 
   if (!selectedUser) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-500">
-        <p className="text-2xl">Add User to Chat</p>
+      <div className="flex-1 flex flex-col">
+        <div className="p-4 bg-gray-700 text-gray-100 flex items-center justify-between">
+          <div className="flex items-center">
+            <button className="text-gray-100 focus:outline-none">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </button>
+          </div>
+          <button className="text-gray-100 focus:outline-none ml-auto" onClick={() => dispatch(setLogout())}>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5H5a2 2 0 00-2 2v10a2 2 0 002 2h4m-1.414-9L15 17.586M10 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="flex-1 flex items-center justify-center text-gray-500">
+          <p className="text-2xl">Add User to Chat</p>
+        </div>
       </div>
     );
   }
+  
 
   return (
     <div className="flex-1 flex flex-col">

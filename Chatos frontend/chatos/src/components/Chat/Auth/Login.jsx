@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-  MDBBtn,
-  MDBContainer,
-  MDBCard,
-  MDBCardBody,
-  MDBInput
-} from 'mdb-react-ui-kit';
+import { MDBBtn, MDBContainer, MDBCard, MDBCardBody, MDBInput } from 'mdb-react-ui-kit';
 import { setLogin } from '../../../state/actions';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Login() {
   const dispatch = useDispatch();
@@ -18,14 +18,19 @@ function Login() {
     password: ''
   });
   const [alertMessage, setAlertMessage] = useState('');
+  const [open, setOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
   };
 
   const handleSubmit = async (e) => {
@@ -38,44 +43,37 @@ function Login() {
         body: JSON.stringify(formData),
       });
       const loggedIn = await loggedInResponse.json();
-      console.log("Logged in response:", loggedIn); // Log the response
+      console.log("Logged in response:", loggedIn);
 
-      if (loggedIn.msg) {
-        setAlertMessage(loggedIn.msg);
+      if (loggedIn.message) {
+        setAlertMessage(loggedIn.message);
+        setOpen(true);
       } else {
-        // Reset form fields
-        setFormData({
-          email: '',
-          password: ''
-        });
-
-        // Dispatch login action
-        dispatch(
-          setLogin({
-            user: loggedIn.user,
-            token: loggedIn.token,
-          })
-        );
-
-        // Navigate to home page
+        setFormData({ email: '', password: '' });
+        dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
         navigate("/home");
       }
     } catch (error) {
       console.error("Error logging in:", error.message);
       setAlertMessage("An error occurred while logging in");
+      setOpen(true);
     }
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen flex items-center justify-center">
-      <MDBContainer>
-        <MDBCard className='mx-auto' style={{maxWidth: '400px'}}>
-          <MDBCardBody className='px-5 py-8'>
-            <h2 className="text-3xl text-center mb-8 font-bold text-white">Login</h2>
-            {alertMessage && <div className="alert alert-danger">{alertMessage}</div>}
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+      <MDBContainer className="w-full h-full flex items-center justify-center">
+        <MDBCard className='mx-auto' style={{ maxWidth: '600px' }}>
+          <MDBCardBody className='px-10 py-12'>
+            <h2 className="text-4xl text-center mb-10 font-bold text-gray-800">Login</h2>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error">
+                {alertMessage}
+              </Alert>
+            </Snackbar>
             <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="email" className="text-white">Your Email</label>
+              <div className="mb-6">
+                <label htmlFor="email" className="text-gray-800">Your Email</label>
                 <MDBInput
                   id='email'
                   type='email'
@@ -83,11 +81,11 @@ function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="rounded-full"
+                  className="rounded-full py-3 px-4 text-lg"
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="password" className="text-white">Password</label>
+              <div className="mb-6">
+                <label htmlFor="password" className="text-gray-800">Password</label>
                 <MDBInput
                   id='password'
                   type='password'
@@ -95,13 +93,15 @@ function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="rounded-full"
+                  className="rounded-full py-3 px-4 text-lg"
                 />
               </div>
-              <MDBBtn className='mb-4 w-full bg-white text-black' size='lg' type='submit'>Login</MDBBtn>
+              <MDBBtn className='mb-6 w-full bg-green-500 text-white hover:bg-green-600 text-lg' size='lg' type='submit'>Login</MDBBtn>
             </form>
-
-            <div><button onClick={()=>{navigate("/registration")}}>Register page</button></div>
+            <div className="text-center">
+              <p className="text-gray-700">Don't have an account?</p>
+              <button onClick={() => { navigate("/registration") }} className="text-blue-500 hover:underline text-lg">Register</button>
+            </div>
           </MDBCardBody>
         </MDBCard>
       </MDBContainer>

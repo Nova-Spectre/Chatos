@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-const SearchBar = ({ onUserSelect,loggedUserId  }) => {
+const SearchBar = ({ onUserSelect , loggedUser }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -26,8 +26,12 @@ const SearchBar = ({ onUserSelect,loggedUserId  }) => {
             Authorization: `Bearer ${token}`, // Include the token in the request headers
           },
         });
-        setSuggestions(response.data);
-        console.log(response.data);
+        
+        // Filter out the logged-in user from the suggestions
+        const filteredSuggestions = response.data.filter(user => user._id !== loggedUser);
+
+        setSuggestions(filteredSuggestions);
+        console.log(filteredSuggestions);
       } catch (error) {
         console.error(error);
       }
@@ -38,29 +42,17 @@ const SearchBar = ({ onUserSelect,loggedUserId  }) => {
     } else {
       setSuggestions([]);
     }
-  }, [debouncedQuery, token]); // Added token to the dependency array
+  }, [debouncedQuery, token, loggedUser]); // Added loggedUser to the dependency array
 
+  
   const handleSelect = (selectedUser) => {
     // Pass the selected user to the parent component
-    onUserSelect(selectedUser);
-    addUserToConversation(selectedUser._id);
+    const formattedUser = { _id: selectedUser._id, username: selectedUser.username };
+    onUserSelect(formattedUser);
+    console.log(`Searchbar`,selectedUser._id,selectedUser.username);
+  
     setQuery('');
     setSuggestions([]);
-  };
-
-
-  const addUserToConversation = async (userId) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/chatos/add-users",
-        { memberId:userId,senderId:loggedUserId},
-      );
-      console.log("User added to conversation:", response.data);
-      // Implement logic to update the user list if needed
-    } catch (error) {
-      console.error("Error adding user to conversation:", error);
-      console.log(error);
-    }
   };
 
   return (
